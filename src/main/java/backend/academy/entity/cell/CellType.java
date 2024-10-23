@@ -6,9 +6,9 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public enum CellType {
-    PASSAGE(1),          // Обычный проход
-    BAD_SURFACE(2),      // Плохое покрытие (например, болото)
-    GOOD_SURFACE(0);     // Хорошее покрытие (например, монетки)
+    PASSAGE(1),
+    BAD_SURFACE(2),
+    GOOD_SURFACE(0);
 
     private final int movementCost;
 }
