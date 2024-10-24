@@ -59,9 +59,8 @@ public abstract class AbstractSolver implements Solver {
                     int currentCost = costMap.get(current);
                     int newCost = currentCost + edge.type().movementCost() + neighbor.cellType().movementCost();
 
-                    if (!visited.contains(neighbor)) {
+                    if (visited.add(neighbor)) {
                         addToStructure(neighbor);
-                        visited.add(neighbor);
                         predecessors.put(neighbor, current);
                         costMap.put(neighbor, newCost);
                     }
@@ -97,5 +96,4 @@ public abstract class AbstractSolver implements Solver {
      * Очищает используемую структуру данных, чтобы удалить все ранее добавленные элементы.
      */
     protected abstract void clearStructure();
-
 }

@@ -9,7 +9,7 @@ import java.util.Queue;
  * Реализация BFS с использованием очереди.
  */
 public class BFSSolver extends AbstractSolver {
-    private final Queue<Cell> queue = new LinkedList<>();
+    private final Queue<Cell> cells = new LinkedList<>();
 
     public BFSSolver(ReconstructorPath reconstructorPath) {
         super(reconstructorPath);
@@ -17,21 +17,21 @@ public class BFSSolver extends AbstractSolver {
 
     @Override
     protected void addToStructure(Cell cell) {
-        queue.add(cell);
+        cells.add(cell);
     }
 
     @Override
     protected Cell retrieveFromStructure() {
-        return queue.poll();
+        return cells.poll();
     }
 
     @Override
     protected boolean isStructureEmpty() {
-        return queue.isEmpty();
+        return cells.isEmpty();
     }
 
     @Override
     protected void clearStructure() {
-        queue.clear();
+        cells.clear();
     }
 }

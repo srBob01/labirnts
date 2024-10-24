@@ -9,7 +9,7 @@ import java.util.Deque;
  * Реализация DFS с использованием Deque.
  */
 public class DFSSolver extends AbstractSolver {
-    private final Deque<Cell> deque = new ArrayDeque<>();
+    private final Deque<Cell> cells = new ArrayDeque<>();
 
     public DFSSolver(ReconstructorPath reconstructorPath) {
         super(reconstructorPath);
@@ -17,21 +17,21 @@ public class DFSSolver extends AbstractSolver {
 
     @Override
     protected void addToStructure(Cell cell) {
-        deque.push(cell);
+        cells.push(cell);
     }
 
     @Override
     protected Cell retrieveFromStructure() {
-        return deque.pop();
+        return cells.pop();
     }
 
     @Override
     protected boolean isStructureEmpty() {
-        return deque.isEmpty();
+        return cells.isEmpty();
     }
 
     @Override
     protected void clearStructure() {
-        deque.clear();
+        cells.clear();
     }
 }
