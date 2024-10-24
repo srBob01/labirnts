@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Random;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 
@@ -44,8 +43,8 @@ public class KruskalMazeGenerator implements Generator {
         for (Cell cell : maze.getAllCells()) {
             for (Edge edge : maze.getEdges(cell)) {
                 // Добавляем только один экземпляр ребра (если from <= to по некоторому критерию)
-                if (cell.coordinate().row() <= edge.to().coordinate().row() &&
-                    cell.coordinate().col() <= edge.to().coordinate().col()) {
+                if (cell.coordinate().row() <= edge.to().coordinate().row()
+                    && cell.coordinate().col() <= edge.to().coordinate().col()) {
                     edges.add(edge);
                 }
             }
@@ -55,12 +54,7 @@ public class KruskalMazeGenerator implements Generator {
         List<Edge> edgeList = new ArrayList<>(edges);
 
         // Перемешиваем список рёбер случайным образом
-        Collections.shuffle(edgeList, new Random() {
-            @Override
-            public int nextInt(int bound) {
-                return randomGenerator.nextInt(bound);
-            }
-        });
+        Collections.shuffle(edgeList);
 
         // Алгоритм Крускала для генерации лабиринта
         for (Edge edge : edgeList) {
