@@ -8,7 +8,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public class ReconstructPath {
+public class ReconstructorPath {
     /**
      * Вспомогательный метод для восстановления пути.
      *
@@ -17,7 +17,7 @@ public class ReconstructPath {
      * @param totalCost    Общая стоимость пути.
      * @return Путь и его стоимость.
      */
-    public Path reconstructPath(Map<Cell, Cell> predecessors, Cell endCell, int totalCost) {
+    public Path reconstruct(Map<Cell, Cell> predecessors, Cell endCell, int totalCost) {
         List<Coordinate> path = new ArrayList<>();
         Cell current = endCell;
 
