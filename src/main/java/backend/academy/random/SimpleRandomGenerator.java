@@ -1,9 +1,13 @@
 package backend.academy.random;
 
-import java.util.Random;
+import java.security.SecureRandom;
 
 public class SimpleRandomGenerator implements RandomGenerator {
-    private final Random random = new Random();
+    private final SecureRandom random;
+
+    public SimpleRandomGenerator() {
+        random = new SecureRandom();
+    }
 
     @Override
     public int nextInt(int bound) {

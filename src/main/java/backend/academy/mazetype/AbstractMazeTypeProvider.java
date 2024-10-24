@@ -6,9 +6,9 @@ import backend.academy.random.RandomGenerator;
 import java.util.Arrays;
 
 public class AbstractMazeTypeProvider implements MazeTypeProvider {
-    private final CellType[] TYPES;
-    private final EdgeType[] PASSABLE_TYPES;
-    private final EdgeType[] WALL_TYPES;
+    private final CellType[] types;
+    private final EdgeType[] passableTypes;
+    private final EdgeType[] wallTypes;
 
     private final RandomGenerator randomGenerator;
 
@@ -24,43 +24,43 @@ public class AbstractMazeTypeProvider implements MazeTypeProvider {
         CellType[] types, EdgeType[] passableTypes, EdgeType[] wallTypes,
         RandomGenerator randomGenerator
     ) {
-        TYPES = types;
-        PASSABLE_TYPES = passableTypes;
-        WALL_TYPES = wallTypes;
+        this.types = types;
+        this.passableTypes = passableTypes;
+        this.wallTypes = wallTypes;
         this.randomGenerator = randomGenerator;
     }
 
     @Override
     public CellType getCellType() {
-        if (TYPES.length == 1) {
-            return TYPES[0];
+        if (types.length == 1) {
+            return types[0];
         }
-        return TYPES[randomGenerator.nextInt(TYPES.length)];
+        return types[randomGenerator.nextInt(types.length)];
     }
 
     @Override
     public EdgeType getPassableEdgeType() {
-        if (PASSABLE_TYPES.length == 1) {
-            return PASSABLE_TYPES[0];
+        if (passableTypes.length == 1) {
+            return passableTypes[0];
         }
-        return PASSABLE_TYPES[randomGenerator.nextInt(PASSABLE_TYPES.length)];
+        return passableTypes[randomGenerator.nextInt(passableTypes.length)];
     }
 
     @Override
     public EdgeType getUnPassableEdgeType() {
-        if (WALL_TYPES.length == 1) {
-            return WALL_TYPES[0];
+        if (wallTypes.length == 1) {
+            return wallTypes[0];
         }
-        return WALL_TYPES[randomGenerator.nextInt(WALL_TYPES.length)];
+        return wallTypes[randomGenerator.nextInt(wallTypes.length)];
     }
 
     @Override
     public boolean isWall(EdgeType type) {
-        return Arrays.stream(WALL_TYPES).anyMatch(wall -> wall == type);
+        return Arrays.stream(wallTypes).anyMatch(wall -> wall == type);
     }
 
     @Override
     public boolean isPassage(EdgeType type) {
-        return Arrays.stream(PASSABLE_TYPES).anyMatch(passable -> passable == type);
+        return Arrays.stream(passableTypes).anyMatch(passable -> passable == type);
     }
 }
