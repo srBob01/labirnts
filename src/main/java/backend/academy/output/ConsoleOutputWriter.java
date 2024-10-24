@@ -1,9 +1,8 @@
 package backend.academy.output;
 
+import java.io.PrintStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.PrintStream;
 
 public class ConsoleOutputWriter implements OutputInterface {
     private static final Logger LOGGER = LoggerFactory.getLogger(ConsoleOutputWriter.class);
