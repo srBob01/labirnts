@@ -10,11 +10,6 @@ import backend.academy.random.RandomGenerator;
  */
 public final class AdvancedMazeTypeProvider extends AbstractMazeTypeProvider {
 
-    /**
-     * Конструктор для {@link AdvancedMazeTypeProvider}.
-     *
-     * @param randomGenerator Экземпляр {@link RandomGenerator} для генерации случайных типов.
-     */
     public AdvancedMazeTypeProvider(RandomGenerator randomGenerator) {
         super(CellType.values(),
             new EdgeType[] {EdgeType.TRANSITION, EdgeType.GOOD_TRANSITION, EdgeType.BAD_TRANSITION},

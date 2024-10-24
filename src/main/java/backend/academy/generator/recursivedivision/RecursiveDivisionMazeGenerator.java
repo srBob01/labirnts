@@ -55,7 +55,6 @@ public class RecursiveDivisionMazeGenerator implements Generator {
         Maze maze,
         MazeTypeProvider typeProvider
     ) {
-        // Инициализируем сетку ячеек
         mazeUtils.initializeGrid(height, width, grid, maze, typeProvider);
 
         // Устанавливаем все рёбра как проходные, чтобы изначально не было стен
@@ -91,18 +90,18 @@ public class RecursiveDivisionMazeGenerator implements Generator {
             return;
         }
 
-        // Выбираем, будет ли стена горизонтальной или вертикальной, в зависимости от размеров области
+        // Выбираем, будет ли стена горизонтальной или вертикальной
         boolean horizontal = width < height;
 
         int wx;
         int wy;
 
-        // Определяем координаты начала стены (не на краю)
+        // Определяем координаты начала стены
         if (horizontal) {
             wx = x;
-            wy = y + 1 + randomGenerator.nextInt(height - 2); // Стена не на краю
+            wy = y + 1 + randomGenerator.nextInt(height - 2);
         } else {
-            wx = x + 1 + randomGenerator.nextInt(width - 2); // Стена не на краю
+            wx = x + 1 + randomGenerator.nextInt(width - 2);
             wy = y;
         }
 
@@ -110,11 +109,11 @@ public class RecursiveDivisionMazeGenerator implements Generator {
         int px;
         int py;
         if (horizontal) {
-            px = wx + randomGenerator.nextInt(width); // Проход в случайной позиции по ширине
+            px = wx + randomGenerator.nextInt(width);
             py = wy;
         } else {
             px = wx;
-            py = wy + randomGenerator.nextInt(height); // Проход в случайной позиции по высоте
+            py = wy + randomGenerator.nextInt(height);
         }
 
         int dx = horizontal ? 1 : 0;
@@ -131,7 +130,6 @@ public class RecursiveDivisionMazeGenerator implements Generator {
                 Cell cell1 = grid[ny][nx];
                 Cell cell2 = grid[ny + dy][nx + dx];
 
-                // Устанавливаем стену между ячейками
                 mazeUtils.setUnpassableEdgeAndReverse(maze, cell1, cell2, typeProvider);
             }
         }

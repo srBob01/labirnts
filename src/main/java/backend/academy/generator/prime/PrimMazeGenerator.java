@@ -21,13 +21,15 @@ public class PrimMazeGenerator implements Generator {
 
     @Override
     public Maze generate(int height, int width, MazeTypeProvider typeProvider) {
+        if (height < 1 || width < 1) {
+            throw new IllegalArgumentException("Размеры лабиринта должны быть положительными.");
+        }
+
         Cell[][] grid = new Cell[height][width];
         Maze maze = new Maze();
 
-        // Инициализация сетки и стен
         mazeUtils.initializeGridAndWalls(height, width, grid, maze, typeProvider);
 
-        // Выбираем случайную начальную ячейку
         int startRow = randomGenerator.nextInt(height);
         int startCol = randomGenerator.nextInt(width);
         Cell startCell = grid[startRow][startCol];
@@ -36,10 +38,8 @@ public class PrimMazeGenerator implements Generator {
         boolean[][] inMaze = new boolean[height][width];
         inMaze[startRow][startCol] = true;
 
-        // Используем Set для хранения рёбер на границе, чтобы избежать дубликатов
         Set<Edge> frontierEdges = new HashSet<>(maze.getEdges(startCell));
 
-        // Основной цикл алгоритма
         while (!frontierEdges.isEmpty()) {
             // Преобразуем Set в список для выбора случайного ребра
             Edge[] edgesArray = frontierEdges.toArray(new Edge[0]);
@@ -52,18 +52,10 @@ public class PrimMazeGenerator implements Generator {
             int nCol = neighbor.coordinate().col();
 
             if (!inMaze[nRow][nCol]) {
-                // Меняем тип ребра на проходной
-                edge.type(typeProvider.getPassableEdgeType());
-                // Также обновляем обратное ребро
-                Edge reverseEdge = maze.getEdge(neighbor, edge.from());
-                if (reverseEdge != null) {
-                    reverseEdge.type(typeProvider.getPassableEdgeType());
-                }
+                mazeUtils.setPassableEdgeAndReverse(maze, edge, typeProvider);
 
-                // Помечаем соседнюю ячейку как входящую в лабиринт
                 inMaze[nRow][nCol] = true;
 
-                // Получаем все рёбра соседней ячейки и добавляем непосещённые в границу
                 frontierEdges.addAll(mazeUtils.getUnvisitedNeighbors(maze, neighbor, inMaze));
             }
         }

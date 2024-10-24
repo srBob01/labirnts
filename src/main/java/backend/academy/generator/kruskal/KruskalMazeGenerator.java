@@ -5,7 +5,6 @@ import backend.academy.entity.edge.Edge;
 import backend.academy.entity.maze.Maze;
 import backend.academy.generator.Generator;
 import backend.academy.mazetype.MazeTypeProvider;
-import backend.academy.random.RandomGenerator;
 import backend.academy.utils.MazeUtils;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -19,30 +18,30 @@ import lombok.RequiredArgsConstructor;
  */
 @RequiredArgsConstructor
 public class KruskalMazeGenerator implements Generator {
-    private final RandomGenerator randomGenerator;
     private final MazeUtils mazeUtils;
 
     @Override
     public Maze generate(int height, int width, MazeTypeProvider typeProvider) {
+        if (height < 1 || width < 1) {
+            throw new IllegalArgumentException("Размеры лабиринта должны быть положительными.");
+        }
+
         Maze maze = new Maze();
         Cell[][] grid = new Cell[height][width];
 
-        // Инициализация сетки и стен
         mazeUtils.initializeGridAndWalls(height, width, grid, maze, typeProvider);
 
-        // Инициализация DisjointSet структуры (непересекающиеся множества)
         DisjointSet<Cell> disjointSet = new DisjointSet<>();
         for (Cell[] row : grid) {
             for (Cell cell : row) {
-                disjointSet.makeSet(cell); // Создаём множество для каждой ячейки
+                disjointSet.makeSet(cell);
             }
         }
 
-        // Получаем список всех рёбер (стен) из лабиринта
         Set<Edge> edges = new HashSet<>();
         for (Cell cell : maze.getAllCells()) {
             for (Edge edge : maze.getEdges(cell)) {
-                // Добавляем только один экземпляр ребра (если from <= to по некоторому критерию)
+                // Добавляем только один экземпляр ребра
                 if (cell.coordinate().row() <= edge.to().coordinate().row()
                     && cell.coordinate().col() <= edge.to().coordinate().col()) {
                     edges.add(edge);
@@ -53,10 +52,8 @@ public class KruskalMazeGenerator implements Generator {
         // Преобразуем Set в список для перемешивания
         List<Edge> edgeList = new ArrayList<>(edges);
 
-        // Перемешиваем список рёбер случайным образом
         Collections.shuffle(edgeList);
 
-        // Алгоритм Крускала для генерации лабиринта
         for (Edge edge : edgeList) {
             Cell cell1 = edge.from();
             Cell cell2 = edge.to();
@@ -68,13 +65,7 @@ public class KruskalMazeGenerator implements Generator {
                 // Объединяем множества
                 disjointSet.union(cell1, cell2);
 
-                // Меняем тип ребра на проходной
-                edge.type(typeProvider.getPassableEdgeType());
-                // Также обновляем обратное ребро
-                Edge reverseEdge = maze.getEdge(cell2, cell1);
-                if (reverseEdge != null) {
-                    reverseEdge.type(typeProvider.getPassableEdgeType());
-                }
+                mazeUtils.setPassableEdgeAndReverse(maze, edge, typeProvider);
             }
         }
 

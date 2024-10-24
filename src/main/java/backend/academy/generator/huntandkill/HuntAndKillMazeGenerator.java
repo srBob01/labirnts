@@ -20,14 +20,16 @@ public class HuntAndKillMazeGenerator implements Generator {
 
     @Override
     public Maze generate(int height, int width, MazeTypeProvider typeProvider) {
-        Maze maze = new Maze();
+        if (height < 1 || width < 1) {
+            throw new IllegalArgumentException("Размеры лабиринта должны быть положительными.");
+        }
+
         Cell[][] grid = new Cell[height][width];
+        Maze maze = new Maze();
         boolean[][] visited = new boolean[height][width];
 
-        // Инициализация сетки и стен
         mazeUtils.initializeGridAndWalls(height, width, grid, maze, typeProvider);
 
-        // Старт со случайной ячейки
         int currentRow = randomGenerator.nextInt(height);
         int currentCol = randomGenerator.nextInt(width);
         Cell currentCell = grid[currentRow][currentCol];
@@ -41,7 +43,6 @@ public class HuntAndKillMazeGenerator implements Generator {
                 // Выбор случайного не посещённого соседа
                 Edge edge = unvisitedNeighbors.get(randomGenerator.nextInt(unvisitedNeighbors.size()));
 
-                // Используем утилиту для установки проходного типа и обновления обратного ребра
                 mazeUtils.setPassableEdgeAndReverse(maze, edge, typeProvider);
 
                 // Переход к следующей ячейке
@@ -61,7 +62,6 @@ public class HuntAndKillMazeGenerator implements Generator {
                                 // Удаляем стену между ячейкой и её посещённым соседом
                                 Edge edge = visitedNeighbors.get(randomGenerator.nextInt(visitedNeighbors.size()));
 
-                                // Используем утилиту для установки проходного типа и обновления обратного ребра
                                 mazeUtils.setPassableEdgeAndReverse(maze, edge, typeProvider);
 
                                 // Помечаем ячейку как посещённую и переходим к ней

@@ -118,10 +118,8 @@ public class MazeUtils {
         Cell currentCell = edge.from();
         Cell neighborCell = edge.to();
 
-        // Меняем тип ребра на проходной
         edge.type(typeProvider.getPassableEdgeType());
 
-        // Также обновляем обратное ребро
         Edge reverseEdge = maze.getEdge(neighborCell, currentCell);
         if (reverseEdge != null) {
             reverseEdge.type(typeProvider.getPassableEdgeType());
@@ -138,14 +136,11 @@ public class MazeUtils {
      * @param typeProvider Провайдер типов рёбер, который предоставляет тип непроходимого ребра.
      */
     public void setUnpassableEdgeAndReverse(Maze maze, Cell from, Cell to, MazeTypeProvider typeProvider) {
-        // Получаем ребро между двумя ячейками
         Edge edge = maze.getEdge(from, to);
 
-        // Если ребро существует, меняем его тип на непроходимый
         if (edge != null) {
             edge.type(typeProvider.getUnPassableEdgeType());
 
-            // Находим и обновляем обратное ребро (из ячейки "to" в ячейку "from"), если оно существует
             Edge reverseEdge = maze.getEdge(to, from);
             if (reverseEdge != null) {
                 reverseEdge.type(typeProvider.getUnPassableEdgeType());

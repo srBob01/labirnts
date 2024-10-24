@@ -22,7 +22,7 @@ public class MazeGeneratorFactory {
         this.growingTreeGenerator =
             new GrowingTreeMazeGenerator(randomGenerator, mazeUtils, SelectionStrategyGrowingTree.RANDOM);
         this.huntAndKillGenerator = new HuntAndKillMazeGenerator(randomGenerator, mazeUtils);
-        this.kruskalGenerator = new KruskalMazeGenerator(randomGenerator, mazeUtils);
+        this.kruskalGenerator = new KruskalMazeGenerator(mazeUtils);
         this.primGenerator = new PrimMazeGenerator(randomGenerator, mazeUtils);
         this.recursiveDivisionGenerator = new RecursiveDivisionMazeGenerator(randomGenerator, mazeUtils);
     }

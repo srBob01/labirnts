@@ -9,11 +9,7 @@ import backend.academy.random.FixedRandomGenerator;
  * и {@code TRANSITION} для рёбер.
  */
 public final class SimpleMazeTypeProvider extends AbstractMazeTypeProvider {
-    /**
-     * Конструктор для {@link SimpleMazeTypeProvider}.
-     * Использует фиксированный {@link FixedRandomGenerator}, который всегда возвращает 0,
-     * так как массивы содержат только один элемент.
-     */
+
     public SimpleMazeTypeProvider() {
         super(new CellType[] {CellType.PASSAGE}, new EdgeType[] {EdgeType.TRANSITION}, new EdgeType[] {EdgeType.WALL},
             new FixedRandomGenerator());
