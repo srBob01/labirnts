@@ -12,8 +12,8 @@ import java.util.Optional;
 import java.util.stream.IntStream;
 import lombok.RequiredArgsConstructor;
 
-@RequiredArgsConstructor
-public class GameIORender {
+@RequiredArgsConstructor public class GameIORender {
+    private static final String ATTEMPT_MESSAGE = " attempt): ";
     private final InputInterface inputInterface;
     private final OutputInterface outputInterface;
     private final RandomGenerator randomGenerator;
@@ -107,7 +107,7 @@ public class GameIORender {
     private Optional<Integer> readInt() {
         try {
             String input = inputInterface.read();
-            return Optional.of(Integer.parseInt(input));
+            return Optional.of(Integer.valueOf(input));
         } catch (NumberFormatException e) {
             outputInterface.print("Invalid input. Please enter a valid number.");
         }
@@ -128,11 +128,12 @@ public class GameIORender {
         for (int i = 0; i < numberAttempt; i++) {
             Optional<Integer> result = readInt();
             if (result.isPresent()) {
-                if (result.get() < minNumber || result.get() > maxNumber) {
-                    outputInterface.print("Invalid input. Please enter a number in range from " + minNumber
-                                          + " to " + maxNumber + ".");
+                int value = result.orElseThrow();  // Вместо get() используйте orElseThrow
+                if (value < minNumber || value > maxNumber) {
+                    outputInterface.print("Invalid input. Please enter a number in range from "
+                                          + minNumber + " to " + maxNumber + ".");
                 } else {
-                    return result.get();
+                    return value;
                 }
             }
         }
@@ -146,16 +147,16 @@ public class GameIORender {
      *
      * @param numberAttempt Количество попыток ввода.
      * @param minNumber     Минимальное значение для координат.
-     * @param width         Максимальное значение для ширины (столбец).
-     * @param height        Максимальное значение для высоты (строка).
+     * @param width         Максимальное значение для ширины.
+     * @param height        Максимальное значение для высоты.
      * @return Объект Coordinate с введёнными или случайно выбранными координатами.
      */
     public Coordinate readCoordinates(int numberAttempt, int minNumber, int width, int height) {
-        int row = readIntWithRetries(numberAttempt, minNumber, height, "Enter row coordinate ("
-                                                                       + numberAttempt + " attempt): ");
+        int row = readIntWithRetries(numberAttempt, minNumber, height,
+            "Enter row coordinate (" + numberAttempt + ATTEMPT_MESSAGE);
 
-        int col = readIntWithRetries(numberAttempt, minNumber, width, "Enter column coordinate ("
-                                                                      + numberAttempt + " attempt): ");
+        int col = readIntWithRetries(numberAttempt, minNumber, width,
+            "Enter column coordinate (" + numberAttempt + ATTEMPT_MESSAGE);
 
         return new Coordinate(row, col);
     }
@@ -167,9 +168,9 @@ public class GameIORender {
      * @return true, если введено любое значение, кроме 0, иначе false.
      */
     public boolean readBoolean(String message) {
-        outputInterface.print(message);  // Вывод приглашения
+        outputInterface.print(message);
         Optional<Integer> input = readInt();
-        return input.map(value -> value != 0).orElse(true);
+        return input.orElse(1) != 0;
     }
 
     public void print(String string) {
