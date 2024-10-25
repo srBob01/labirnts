@@ -1,137 +1,134 @@
-# Шаблон Java-проекта для домашних заданий
+# Maze Game - Генерация и Решение Лабиринтов
 
-Шаблон для домашних заданий [Академии Бэкенда 2024][course-url].
-
-Цель данного репозитория – познакомить вас с процессом разработки приложений на
-Java с использованием наиболее распространенных практик, инструментов и
-библиотек.
+**Maze Game** — это игра, в которой вы можете генерировать лабиринты с использованием различных алгоритмов, добавлять
+туда циклы, выбирать начальные и конечные точки, а затем решать их с помощью различных методов поиска пути.
 
 ## Структура проекта
 
-Это типовой Java-проект, который собирается с помощью инструмента автоматической
-сборки проектов [Apache Maven](https://maven.apache.org/).
+Проект состоит из следующих ключевых элементов:
 
-Проект состоит из следующих директорий и файлов:
+- **[GameLogic](./src/main/java/backend/academy/game/GameLogic.java)** — Основной класс игры, который управляет этапами
+  игры.
+- **Генераторы лабиринтов** — классы, которые реализуют различные алгоритмы генерации:
+    - **[Алгоритм Прима](./src/main/java/backend/academy/generator/prime/PrimMazeGenerator.java)**
+    - **[Алгоритм Крускала](./src/main/java/backend/academy/generator/kruskal/KruskalMazeGenerator.java)**
+    - **[Алгоритм растущего дерева](./src/main/java/backend/academy/generator/growingtree/GrowingTreeMazeGenerator.java)**
+    - **[Алгоритм Охоты и Убийства](./src/main/java/backend/academy/generator/huntandkill/HuntAndKillMazeGenerator.java)**
+    - **[Рекурсивное деление](./src/main/java/backend/academy/generator/recursivedivision/RecursiveDivisionMazeGenerator.java)**
+- **Алгоритмы решения** — реализуют различные методы поиска пути:
+    - **[AStar](./src/main/java/backend/academy/solver/priority/AStarSolver.java)**
+    - **[Dijkstra](./src/main/java/backend/academy/solver/priority/DijkstraSolver.java)**
+    - **[BFS](./src/main/java/backend/academy/solver/fs/BFSSolver.java)**
+    - **[DFS](./src/main/java/backend/academy/solver/fs/DFSSolver.java)**
+    - **[BiDirection](./src/main/java/backend/academy/solver/bidirection/BiDirectionalSolver.java)**
 
-- [pom.xml](./pom.xml) – дескриптор сборки, используемый maven, или Project
-  Object Model. В нем описаны зависимости проекта и шаги по его сборке
-- [src/](./src) – директория, которая содержит исходный код приложения и его
-  тесты:
-  - [src/main/](./src/main) – здесь находится код вашего приложения
-  - [src/test/](./src/test) – здесь находятся тесты вашего приложения
-- [mvnw](./mvnw) и [mvnw.cmd](./mvnw.cmd) – скрипты maven wrapper для Unix и
-  Windows, которые позволяют запускать команды maven без локальной установки
-- [checkstyle.xml](checkstyle.xml),
-  [checkstyle-suppression.xml](checkstyle-suppression.xml), [pmd.xml](pmd.xml) и
-  [spotbugs-excludes.xml](spotbugs-excludes.xml) – в проекте используются
-  [линтеры](https://en.wikipedia.org/wiki/Lint_%28software%29) для контроля
-  качества кода. Указанные файлы содержат правила для используемых линтеров
-- [.mvn/](./.mvn) – служебная директория maven, содержащая конфигурационные
-  параметры сборщика
-- [lombok.config](lombok.config) – конфигурационный файл
-  [Lombok](https://projectlombok.org/), библиотеки помогающей избежать рутинного
-  написания шаблонного кода
-- [.editorconfig](.editorconfig) – файл с описанием настроек форматирования кода
-- [.github/workflows/build.yml](.github/workflows/build.yml) – файл с описанием
-  шагов сборки проекта в среде Github
-- [.gitattributes](.gitattributes), [.gitignore](.gitignore) – служебные файлы
-  для git, с описанием того, как обрабатывать различные файлы, и какие из них
-  игнорировать
+- **[pom.xml](./pom.xml)** — Дескриптор сборки Maven, описывающий зависимости.
 
-## Начало работы
+## Как играть
 
-Подробнее о том, как приступить к разработке, описано в разделах
-[курса][course-url] `1.8 Настройка IDE`, `1.9 Работа с Git` и
-`1.10 Настройка SSH`.
+1. **Ввод размеров лабиринта**  
+   Введите высоту и ширину лабиринта. Например:
+   ```plaintext
+   Enter height
+   > 3
+   Enter width
+   > 15
+   ```
 
-Для того чтобы собрать проект, и проверить, что все работает корректно, можно
-запустить из модального окна IDEA
-[Run Anything](https://www.jetbrains.com/help/idea/running-anything.html)
-команду:
+2. **Выбор типа ячеек**  
+   Выберите тип ячеек, который будет использоваться в лабиринте:
+   ```plaintext
+   Select Maze Type Provider.
+   0 - Simple cell type, without advanced characteristics
+   1 - Advanced cell type with extended characteristics
+   other - random
+   > 1
+   Your choice Maze Type Provider: Advanced cell type with extended characteristics
+   ```
 
-```shell
-mvn clean verify
-```
+3. **Выбор алгоритма генерации лабиринта**  
+   Выберите алгоритм, который будет использоваться для генерации лабиринта:
+   ```plaintext
+   Select Maze Generator.
+   0 - Growing Tree Algorithm
+   1 - Hunt and Kill Algorithm
+   2 - Kruskal's Algorithm
+   3 - Prim's Algorithm
+   4 - Recursive Division Algorithm
+   other - random
+   > 3
+   Your choice Maze Generator: Prim's Algorithm
+   ```
 
-Альтернативно можно в терминале из корня проекта выполнить следующие команды.
+4. **Добавление циклов (опционально)**  
+   Можно добавить циклы в лабиринт для усложнения структуры:
+   ```plaintext
+   Should cycles be added? (0 - no, anything else - yes)
+   > 1
+   ```
 
-Для Unix (Linux, macOS, Cygwin, WSL):
+5. **Добавление циклов (опционально)**  
+   Насколько много добавлять циклов:
+   ```plaintext
+   Select Cycle level
+    0 - LOW
+    1 - MEDIUM
+    2 - HIGH
+    other - random.
+    > 2
+    +---+---+---+
+    |   =     B |
+    + ~ + = + ~ +
+    |   ~ B ~ G |
+    + ~ + = +   +
+    | B |   ~ G |
+    +---+---+---+
+     ```
 
-```shell
-./mvnw clean verify
-```
+6. **Выбор начальных и конечных точек**  
+   Укажите, хотите ли вы выбрать начальные и конечные точки вручную или доверить это программе:
+   ```plaintext
+   Select a random starting point? (0 - no, anything else - yes)
+   > 1
+   Start point: Coordinate[row=0, col=1]
+   End point: Coordinate[row=2, col=0]
+   ```
 
-Для Windows:
+7. **Выбор алгоритма решения лабиринта**  
+   Выберите один из алгоритмов решения:
+   ```plaintext
+   0 - Breadth-First Search (BFS)
+   1 - Depth-First Search (DFS)
+   2 - Dijkstra's Algorithm
+   3 - A* Algorithm
+   4 - Bidirectional Search
+   5 - All Algorithms
+   other - random
+   > 3
+   Your choice Solver Type: A* Algorithm
+   ```
 
-```shell
-mvnw.cmd clean verify
-```
-
-Для окончания сборки потребуется подождать какое-то время, пока maven скачает
-все необходимые зависимости, скомпилирует проект и прогонит базовый набор
-тестов.
-
-Если вы в процессе сборки получили ошибку:
-
-```shell
-Rule 0: org.apache.maven.enforcer.rules.version.RequireJavaVersion failed with message:
-JDK version must be at least 22
-```
-
-Значит, версия вашего JDK ниже 22.
-
-Если же получили ошибку:
-
-```shell
-Rule 1: org.apache.maven.enforcer.rules.version.RequireMavenVersion failed with message:
-Maven version should, at least, be 3.8.8
-```
-
-Значит, у вас используется версия maven ниже 3.8.8. Такого не должно произойти,
-если вы запускаете сборку из IDEA или через `mvnw`-скрипты.
-
-Далее будут перечислены другие полезные команды maven.
-
-Запуск только компиляции основных классов:
-
-```shell
-mvn compile
-```
-
-Запуск тестов:
-
-```shell
-mvn test
-```
-
-Запуск линтеров:
-
-```shell
-mvn checkstyle:check modernizer:modernizer spotbugs:check pmd:check pmd:cpd-check
-```
-
-Вывод дерева зависимостей проекта (полезно при отладке транзитивных
-зависимостей):
-
-```shell
-mvn dependency:tree
-```
-
-Вывод вспомогательной информации о любом плагине (вместо `compiler` можно
-подставить интересующий вас плагин):
-
-```shell
-mvn help:describe -Dplugin=compiler
-```
-
-## Дополнительные материалы
-
-- Документация по maven: https://maven.apache.org/guides/index.html
-- Поиск зависимостей и их версий: https://central.sonatype.com/search
-- Документация по процессу автоматизированной сборки в среде github:
-  https://docs.github.com/en/actions
-- Документация по git: https://git-scm.com/doc
-- Javadoc для Java 22:
-  https://docs.oracle.com/en/java/javase/22/docs/api/index.html
-
-[course-url]: https://edu.tinkoff.ru/all-activities/courses/870efa9d-7067-4713-97ae-7db256b73eab
+8. **Вывод результатов**  
+   Игра выведет сгенерированный лабиринт и решение с общей стоимостью пути:
+   ```plaintext
+    +---+---+---+
+    | * * *   B |
+    + * + = + ~ +
+    | * ~ B ~ G |
+    + * + = +   +
+    | * |   ~ G |
+    +---+---+---+
+   A* Algorithm : 9
+   ```
+9. **Дальнейшие действия**
+   Далее необходимо решить что дальше, и игра начнется с этого места:
+```plaintext
+    0 - Input maze parameters
+    1 - Generate maze
+    2 - Select start and end points
+    3 - Select maze solving method
+    4 - Show solution results
+    5 - Choose next action
+    6 - Finish the game
+    other - random.
+   ```
