@@ -13,10 +13,13 @@ import backend.academy.render.Render;
 import backend.academy.solver.SolverFactory;
 import backend.academy.solver.SolverType;
 import backend.academy.utils.MazeBoundarySelector;
+import java.util.logging.Logger;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class GameLogic {
+
+    private static final Logger LOGGER = Logger.getLogger(GameLogic.class.getName());
 
     private final GameFlowManager gameFlowManager;
     private final GameIORender gameIORender;
@@ -36,6 +39,8 @@ public class GameLogic {
      * Главный метод игры, который управляет всем процессом игры.
      */
     public void startGame() {
+        LOGGER.info("Starting game...");
+
         GameStateType currentState = gameFlowManager.startGame();
         MazeTypeProviderType mazeTypeProviderType = MazeTypeProviderType.SIMPLE;
         MazeGeneratorType generatorType = MazeGeneratorType.KRUSKAL;
@@ -51,38 +56,44 @@ public class GameLogic {
         Coordinate endPoint = null;
 
         while (!gameFlowManager.isFinished(currentState)) {
+            LOGGER.info("Current game state: " + currentState);
+
             currentState = switch (currentState) {
                 case INPUT_PARAMETERS -> {
+                    LOGGER.info("Reading maze dimensions...");
                     height =
-                        gameIORender.readIntWithRetries(NUMBER_ATTEMPT, MIN_SIDE_MAZE, MAX_SIDE_MAZE,
-                            "Enter height");
+                        gameIORender.readIntWithRetries(NUMBER_ATTEMPT, MIN_SIDE_MAZE, MAX_SIDE_MAZE, "Enter height");
                     width =
-                        gameIORender.readIntWithRetries(NUMBER_ATTEMPT, MIN_SIDE_MAZE, MAX_SIDE_MAZE,
-                            "Enter width");
+                        gameIORender.readIntWithRetries(NUMBER_ATTEMPT, MIN_SIDE_MAZE, MAX_SIDE_MAZE, "Enter width");
 
                     mazeTypeProviderType = gameIORender.selectMazeTypeProvider();
+                    LOGGER.info("Maze type provider selected: " + mazeTypeProviderType);
 
                     generatorType = gameIORender.selectMazeGeneratorType();
+                    LOGGER.info("Maze generator type selected: " + generatorType);
 
                     addCycles = generatorType != MazeGeneratorType.RECURSIVE_DIVISION
                                 && gameIORender.readBoolean("Should cycles be added? (0 - no, anything else - yes): ");
+                    LOGGER.info("Cycles added: " + addCycles);
 
                     if (addCycles) {
                         cycleLevelType = gameIORender.selectCycleLevelType();
+                        LOGGER.info("Cycle level type selected: " + cycleLevelType);
                     }
 
                     yield gameFlowManager.next(currentState);
                 }
                 case GENERATE_MAZE -> {
-                    assert mazeTypeProviderType != null;
+                    LOGGER.info("Generating maze...");
                     var mazeTypeProvider = mazeTypeProviderFactory.getProvider(mazeTypeProviderType);
-                    assert generatorType != null;
                     var generator = mazeGeneratorFactory.getGenerator(generatorType);
 
                     maze = generator.generate(height, width, mazeTypeProvider);
+                    LOGGER.info("Maze generated.");
 
                     if (addCycles) {
                         cycleAdder.addCycles(maze, mazeTypeProvider, cycleLevelType);
+                        LOGGER.info("Cycles added to maze.");
                     }
 
                     gameIORender.print(render.render(maze));
@@ -90,75 +101,89 @@ public class GameLogic {
                     yield gameFlowManager.next(currentState);
                 }
                 case SELECT_POINTS -> {
-                    boolean randomSelection = gameIORender.readBoolean(
-                        "Select a random starting point? (0 - no, anything else - yes): ");
+                    LOGGER.info("Selecting start and end points...");
 
+                    boolean randomSelection =
+                        gameIORender.readBoolean("Select a random starting point? (0 - no, anything else - yes): ");
                     if (randomSelection) {
                         startPoint = boundarySelector.selectRandomFromFirstRow(maze, width);
                         endPoint = boundarySelector.selectRandomFromLastRow(maze, height, width);
+                        LOGGER.info("Random start point: " + startPoint + " end point: " + endPoint);
                     } else {
                         startPoint = gameIORender.readCoordinates(NUMBER_ATTEMPT, MIN_SIDE_MAZE, width, height);
                         endPoint = gameIORender.readCoordinates(NUMBER_ATTEMPT, MIN_SIDE_MAZE, width, height);
+                        LOGGER.info("Manual start point: " + startPoint + ", end point: " + endPoint);
                     }
 
-                    gameIORender.print("Start point:" + startPoint);
-                    gameIORender.print("End point" + endPoint);
+                    gameIORender.print("Start point: " + startPoint);
+                    gameIORender.print("End point: " + endPoint);
 
                     yield gameFlowManager.next(currentState);
                 }
                 case SELECT_SOLUTION -> {
                     solverType = gameIORender.selectSolverType();
+                    LOGGER.info("Solver type selected: " + solverType);
                     yield gameFlowManager.next(GameStateType.SELECT_SOLUTION);
                 }
                 case OUTPUT_RESULTS -> {
+                    LOGGER.info("Outputting results...");
+
                     if (solverType == SolverType.ALL) {
                         outputResultsForAllSolutions(maze, startPoint, endPoint, mazeTypeProviderType);
                     } else {
                         outputResults(maze, startPoint, endPoint, solverType, mazeTypeProviderType);
                     }
+
                     yield gameFlowManager.next(currentState);
                 }
-                case CHOOSE_NEXT_ACTION -> gameIORender.selectGameState();
-                case FINISH -> gameFlowManager.finishGame();
+                case CHOOSE_NEXT_ACTION -> {
+                    LOGGER.info("Choosing next action...");
+                    yield gameIORender.selectGameState();
+                }
+                case FINISH -> {
+                    LOGGER.info("Finishing game...");
+                    yield gameFlowManager.finishGame();
+                }
             };
         }
     }
 
-    /**
-     * Решение лабиринта выбранным способом.
-     */
     private Path solveMaze(
-        Maze maze, Coordinate startPoint, Coordinate endPoint, SolverType solverType,
+        Maze maze,
+        Coordinate startPoint,
+        Coordinate endPoint,
+        SolverType solverType,
         MazeTypeProviderType mazeTypeProviderType
     ) {
+        LOGGER.info("Solving maze with " + solverType);
         var solver = solverFactory.getSolver(solverType);
         return solver.solve(maze, startPoint, endPoint, mazeTypeProviderFactory.getProvider(mazeTypeProviderType));
     }
 
-    /**
-     * Отображение решения и его стоимости.
-     */
     private void outputResults(
-        Maze maze, Coordinate startPoint, Coordinate endPoint, SolverType solverType,
+        Maze maze,
+        Coordinate startPoint,
+        Coordinate endPoint,
+        SolverType solverType,
         MazeTypeProviderType mazeTypeProviderType
     ) {
         Path result = solveMaze(maze, startPoint, endPoint, solverType, mazeTypeProviderType);
         gameIORender.print(render.render(maze, result.coordinates()));
-        gameIORender.print(solverType.toString() + DELIMITER + result.totalCost());
-
+        gameIORender.print(solverType + DELIMITER + result.totalCost());
+        LOGGER.info("Result for  " + solverType + ": total cost = " + result.totalCost());
     }
 
-    /**
-     * Вывод решений для всех возможных алгоритмов.
-     */
     private void outputResultsForAllSolutions(
-        Maze maze, Coordinate startPoint, Coordinate endPoint,
+        Maze maze,
+        Coordinate startPoint,
+        Coordinate endPoint,
         MazeTypeProviderType mazeTypeProviderType
     ) {
         for (SolverType solverType : SolverType.values()) {
             if (solverType != SolverType.ALL) {
                 Path solution = solveMaze(maze, startPoint, endPoint, solverType, mazeTypeProviderType);
-                gameIORender.print(solverType.toString() + DELIMITER + solution.totalCost());
+                gameIORender.print(solverType + DELIMITER + solution.totalCost());
+                LOGGER.info("Result for " + solverType + " : total cost = " + solution.totalCost());
             }
         }
     }

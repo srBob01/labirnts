@@ -6,10 +6,14 @@ import backend.academy.generator.Generator;
 import backend.academy.mazetype.MazeTypeProvider;
 import backend.academy.random.RandomGenerator;
 import backend.academy.utils.MazeUtils;
+import java.util.logging.Logger;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class RecursiveDivisionMazeGenerator implements Generator {
+
+    private static final Logger LOGGER = Logger.getLogger(RecursiveDivisionMazeGenerator.class.getName());
+
     private final RandomGenerator randomGenerator;
     private final MazeUtils mazeUtils;
 
@@ -24,7 +28,8 @@ public class RecursiveDivisionMazeGenerator implements Generator {
     @Override
     public Maze generate(int height, int width, MazeTypeProvider typeProvider) {
         if (height < 1 || width < 1) {
-            throw new IllegalArgumentException("Размеры лабиринта должны быть положительными.");
+            LOGGER.warning("The dimensions of the maze must be positive.");
+            throw new IllegalArgumentException("The dimensions of the maze must be positive");
         }
 
         Maze maze = new Maze();

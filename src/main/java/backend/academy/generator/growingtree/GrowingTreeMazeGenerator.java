@@ -9,6 +9,7 @@ import backend.academy.random.RandomGenerator;
 import backend.academy.utils.MazeUtils;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 import lombok.AllArgsConstructor;
 import lombok.Setter;
 
@@ -17,6 +18,9 @@ import lombok.Setter;
  */
 @AllArgsConstructor
 public class GrowingTreeMazeGenerator implements Generator {
+
+    private static final Logger LOGGER = Logger.getLogger(GrowingTreeMazeGenerator.class.getName());
+
     private final RandomGenerator randomGenerator;
     private final MazeUtils mazeUtils;
     @Setter
@@ -25,7 +29,8 @@ public class GrowingTreeMazeGenerator implements Generator {
     @Override
     public Maze generate(int height, int width, MazeTypeProvider typeProvider) {
         if (height < 1 || width < 1) {
-            throw new IllegalArgumentException("Размеры лабиринта должны быть положительными.");
+            LOGGER.warning("The dimensions of the maze must be positive.");
+            throw new IllegalArgumentException("The dimensions of the maze must be positive");
         }
         Maze maze = new Maze();
         Cell[][] grid = new Cell[height][width];

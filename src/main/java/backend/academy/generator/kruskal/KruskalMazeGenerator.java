@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Logger;
 import lombok.RequiredArgsConstructor;
 
 /**
@@ -18,12 +19,16 @@ import lombok.RequiredArgsConstructor;
  */
 @RequiredArgsConstructor
 public class KruskalMazeGenerator implements Generator {
+
+    private static final Logger LOGGER = Logger.getLogger(KruskalMazeGenerator.class.getName());
+
     private final MazeUtils mazeUtils;
 
     @Override
     public Maze generate(int height, int width, MazeTypeProvider typeProvider) {
         if (height < 1 || width < 1) {
-            throw new IllegalArgumentException("Размеры лабиринта должны быть положительными.");
+            LOGGER.warning("The dimensions of the maze must be positive.");
+            throw new IllegalArgumentException("The dimensions of the maze must be positive");
         }
 
         Maze maze = new Maze();

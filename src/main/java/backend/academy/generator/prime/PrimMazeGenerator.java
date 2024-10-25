@@ -9,6 +9,7 @@ import backend.academy.random.RandomGenerator;
 import backend.academy.utils.MazeUtils;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.logging.Logger;
 import lombok.RequiredArgsConstructor;
 
 /**
@@ -16,13 +17,17 @@ import lombok.RequiredArgsConstructor;
  */
 @RequiredArgsConstructor
 public class PrimMazeGenerator implements Generator {
+
+    private static final Logger LOGGER = Logger.getLogger(PrimMazeGenerator.class.getName());
+
     private final RandomGenerator randomGenerator;
     private final MazeUtils mazeUtils;
 
     @Override
     public Maze generate(int height, int width, MazeTypeProvider typeProvider) {
         if (height < 1 || width < 1) {
-            throw new IllegalArgumentException("Размеры лабиринта должны быть положительными.");
+            LOGGER.warning("The dimensions of the maze must be positive.");
+            throw new IllegalArgumentException("The dimensions of the maze must be positive");
         }
 
         Cell[][] grid = new Cell[height][width];
