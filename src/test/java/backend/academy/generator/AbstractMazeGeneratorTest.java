@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public abstract class AbstractMazeGeneratorTest {
@@ -163,6 +164,60 @@ public abstract class AbstractMazeGeneratorTest {
             boolean hasPassableEdge = maze.getEdges(cell).stream().anyMatch(edge -> edge.type().isPassable());
             assertTrue(hasPassableEdge, "Каждая ячейка должна иметь хотя бы одно проходимое ребро.");
         }
+    }
+
+    /**
+     * Тест на невалидные (отрицательные или нулевые) размеры лабиринта.
+     */
+    @Test
+    public void testInvalidDimensions() {
+        // Arrange
+        Generator generator = getGenerator();
+        MazeTypeProvider typeProvider = getMazeTypeProvider();
+
+        // Act & Assert
+        assertThrows(IllegalArgumentException.class, () -> generator.generate(0, 10, typeProvider),
+            "Ожидается исключение при высоте равной 0");
+        assertThrows(IllegalArgumentException.class, () -> generator.generate(10, 0, typeProvider),
+            "Ожидается исключение при ширине равной 0");
+        assertThrows(IllegalArgumentException.class, () -> generator.generate(-1, 10, typeProvider),
+            "Ожидается исключение при отрицательной высоте");
+        assertThrows(IllegalArgumentException.class, () -> generator.generate(10, -1, typeProvider),
+            "Ожидается исключение при отрицательной ширине");
+    }
+
+    /**
+     * Тест на граничные значения размеров лабиринта (1x1).
+     */
+    @Test
+    public void testBoundaryDimension() {
+        // Arrange
+        Generator generator = getGenerator();
+        MazeTypeProvider typeProvider = getMazeTypeProvider();
+
+        // Act
+        Maze maze = generator.generate(1, 1, typeProvider);
+
+        // Assert
+        assertNotNull(maze, "Лабиринт размера 1x1 должен быть успешно создан");
+        assertEquals(1, maze.getAllCells().size(), "Лабиринт размера 1x1 должен содержать одну ячейку");
+    }
+
+    /**
+     * Тест на корректные размеры лабиринта (10x10).
+     */
+    @Test
+    public void testValidDimensions() {
+        // Arrange
+        Generator generator = getGenerator();
+        MazeTypeProvider typeProvider = getMazeTypeProvider();
+
+        // Act
+        Maze maze = generator.generate(HEIGHT, WIDTH, typeProvider);
+
+        // Assert
+        assertNotNull(maze, "Лабиринт размера 10x10 должен быть успешно создан");
+        assertEquals(HEIGHT * WIDTH, maze.getAllCells().size(), "Лабиринт размера 10x10 должен содержать 100 ячеек");
     }
 
     /**
