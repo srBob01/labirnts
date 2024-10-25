@@ -41,6 +41,14 @@ public abstract class AbstractSolver implements Solver {
         Cell startCell = maze.getCell(startCoord);
         Cell endCell = maze.getCell(endCoord);
 
+        if (startCell == null || endCell == null) {
+            return new Path(Collections.emptyList(), 0);
+        }
+
+        if (startCell.equals(endCell)) {
+            return new Path(Collections.singletonList(startCoord), startCell.cellType().movementCost());
+        }
+
         // Добавляем начальную ячейку в структуру и отмечаем её как посещённую
         addToStructure(startCell);
         visited.add(startCell);

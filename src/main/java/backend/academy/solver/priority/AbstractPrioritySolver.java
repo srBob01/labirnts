@@ -39,6 +39,14 @@ public abstract class AbstractPrioritySolver implements Solver {
         Cell startCell = maze.getCell(startCoord);
         Cell endCell = maze.getCell(endCoord);
 
+        if (startCell == null || endCell == null) {
+            return new Path(Collections.emptyList(), 0);
+        }
+
+        if (startCell.equals(endCell)) {
+            return new Path(Collections.singletonList(startCoord), startCell.cellType().movementCost());
+        }
+
         gScores.put(startCell, startCell.cellType().movementCost());
         openSet.add(
             new CellScore(startCell, calculatePriority(startCell, endCell, startCell.cellType().movementCost())));

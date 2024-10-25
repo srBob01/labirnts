@@ -27,11 +27,11 @@ public class BiDirectionalSolver implements Solver {
         Cell endCell = maze.getCell(endCoord);
 
         if (startCell == null || endCell == null) {
-            throw new IllegalArgumentException("Начальная или конечная ячейка не найдена в лабиринте.");
+            return new Path(Collections.emptyList(), 0);
         }
 
         if (startCell.equals(endCell)) {
-            return new Path(Collections.singletonList(startCoord), 0);
+            return new Path(Collections.singletonList(startCoord), startCell.cellType().movementCost());
         }
 
         // Очереди для прямого и обратного поиска
