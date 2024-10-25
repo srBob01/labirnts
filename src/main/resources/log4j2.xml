@@ -23,8 +23,9 @@
         <Logger name="org.instancio" level="INFO"/>
         <Logger name="org.apache.http" level="INFO"/>
         <Logger name="io.restassured" level="INFO"/>
+        <Logger name="backend.academy" level="WARN"/>
 
-        <Root level="ERROR">
+        <Root level="WARN">
             <AppenderRef ref="STDOUT_PLAIN"/>
         </Root>
     </Loggers>
