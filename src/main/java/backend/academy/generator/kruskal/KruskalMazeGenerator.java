@@ -15,7 +15,9 @@ import java.util.logging.Logger;
 import lombok.RequiredArgsConstructor;
 
 /**
- * Генератор лабиринтов с использованием алгоритма Крускала.
+ * Генератор лабиринтов с использованием алгоритма Крускала, путём объединения ячеек с помощью рёбер,
+ * выбранных случайным образом, и исключения циклов. Он работает, создавая минимальное остовное дерево
+ * в графе ячеек и рёбер, что гарантирует, что все ячейки будут соединены.
  */
 @RequiredArgsConstructor
 public class KruskalMazeGenerator implements Generator {
@@ -36,6 +38,7 @@ public class KruskalMazeGenerator implements Generator {
 
         mazeUtils.initializeGridAndWalls(height, width, grid, maze, typeProvider);
 
+        // Создание раздельных множеств (Disjoint Set) для каждой ячейки
         DisjointSet<Cell> disjointSet = new DisjointSet<>();
         for (Cell[] row : grid) {
             for (Cell cell : row) {
@@ -63,11 +66,12 @@ public class KruskalMazeGenerator implements Generator {
             Cell cell1 = edge.from();
             Cell cell2 = edge.to();
 
+            // Находим множества, к которым принадлежат ячейки
             Cell parent1 = disjointSet.findSet(cell1);
             Cell parent2 = disjointSet.findSet(cell2);
 
+            // Если ячейки принадлежат разным множествам, соединяем их
             if (!parent1.equals(parent2)) {
-                // Объединяем множества
                 disjointSet.union(cell1, cell2);
 
                 mazeUtils.setPassableEdgeAndReverse(maze, edge, typeProvider);

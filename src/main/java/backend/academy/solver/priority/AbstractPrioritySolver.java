@@ -30,6 +30,7 @@ public abstract class AbstractPrioritySolver implements Solver {
     public Path solve(Maze maze, Coordinate startCoord, Coordinate endCoord, MazeTypeProvider mazeTypeProvider) {
         int expectedSize = maze.getAllCells().size();
 
+        // Инициализация мэп для предшественников, стоимостей и множества посещённых ячеек
         Map<Cell, Cell> predecessors = new HashMap<>((int) (expectedSize / LOAD_FACTOR) + 1);
         Map<Cell, Integer> gScores = new HashMap<>((int) (expectedSize / LOAD_FACTOR) + 1);
         Set<Cell> closedSet = new HashSet<>((int) (expectedSize / LOAD_FACTOR) + 1);
@@ -46,15 +47,18 @@ public abstract class AbstractPrioritySolver implements Solver {
             CellScore cs = openSet.poll();
             Cell current = cs.cell;
 
+            // Если ячейка уже посещена, пропускаем её
             if (closedSet.contains(current)) {
                 continue;
             }
             closedSet.add(current);
 
+            // Если достигли конечной ячейки, восстанавливаем путь
             if (current.equals(endCell)) {
                 return reconstructorPath.reconstruct(predecessors, endCell, gScores.get(endCell));
             }
 
+            // Обработка соседей текущей ячейки
             for (Edge edge : maze.getEdges(current)) {
                 if (mazeTypeProvider.isPassage(edge.type())) {
                     Cell neighbor = edge.to();
@@ -66,6 +70,7 @@ public abstract class AbstractPrioritySolver implements Solver {
                     int tentativeGScore = gScores.get(current) + weight;
 
                     Integer neighborGScore = gScores.get(neighbor);
+                    // Обновляем стоимость и предшественника, если нашли более короткий путь
                     if (neighborGScore == null || tentativeGScore < neighborGScore) {
                         gScores.put(neighbor, tentativeGScore);
                         predecessors.put(neighbor, current);

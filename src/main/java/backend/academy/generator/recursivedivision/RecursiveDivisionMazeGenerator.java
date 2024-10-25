@@ -9,6 +9,11 @@ import backend.academy.utils.MazeUtils;
 import java.util.logging.Logger;
 import lombok.RequiredArgsConstructor;
 
+/**
+ * Генератор лабиринтов с использованием алгоритма рекурсивного деления.
+ * Алгоритм делит пространство лабиринта на две части, создавая случайно расположенные стены
+ * и оставляя в них проходы. Процесс повторяется рекурсивно, пока области не станут слишком малы.
+ */
 @RequiredArgsConstructor
 public class RecursiveDivisionMazeGenerator implements Generator {
 
@@ -62,7 +67,7 @@ public class RecursiveDivisionMazeGenerator implements Generator {
     ) {
         mazeUtils.initializeGrid(height, width, grid, maze, typeProvider);
 
-        // Устанавливаем все рёбра как проходные, чтобы изначально не было стен
+        // Убираем стены между соседними ячейками
         for (int row = 0; row < height; row++) {
             for (int col = 0; col < width; col++) {
                 Cell cell = grid[row][col];

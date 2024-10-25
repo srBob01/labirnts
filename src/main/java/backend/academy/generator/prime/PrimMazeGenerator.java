@@ -13,7 +13,8 @@ import java.util.logging.Logger;
 import lombok.RequiredArgsConstructor;
 
 /**
- * Генератор лабиринтов с использованием алгоритма Прима.
+ * Генератор лабиринтов с использованием алгоритма Прима, начиная с одной случайной ячейки и постепенно
+ * добавляя соседние рёбра к лабиринту, пока не будут соединены все ячейки.
  */
 @RequiredArgsConstructor
 public class PrimMazeGenerator implements Generator {
@@ -43,6 +44,7 @@ public class PrimMazeGenerator implements Generator {
         boolean[][] inMaze = new boolean[height][width];
         inMaze[startRow][startCol] = true;
 
+        // Граничные рёбра стартовой ячейки
         Set<Edge> frontierEdges = new HashSet<>(maze.getEdges(startCell));
 
         while (!frontierEdges.isEmpty()) {
@@ -50,17 +52,23 @@ public class PrimMazeGenerator implements Generator {
             Edge[] edgesArray = frontierEdges.toArray(new Edge[0]);
             int index = randomGenerator.nextInt(edgesArray.length);
             Edge edge = edgesArray[index];
+
+            // Удаляем выбранное ребро из множества пограничных
             frontierEdges.remove(edge);
 
+            // Получаем соседа через выбранное ребро
             Cell neighbor = edge.to();
             int nRow = neighbor.coordinate().row();
             int nCol = neighbor.coordinate().col();
 
+            // Если сосед ещё не в лабиринте
             if (!inMaze[nRow][nCol]) {
+                // Устанавливаем ребро как проходимое и добавляем ячейку в лабиринт
                 mazeUtils.setPassableEdgeAndReverse(maze, edge, typeProvider);
 
                 inMaze[nRow][nCol] = true;
 
+                // Добавляем рёбра нового соседа к пограничным
                 frontierEdges.addAll(mazeUtils.getUnvisitedNeighbors(maze, neighbor, inMaze));
             }
         }

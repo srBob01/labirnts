@@ -41,6 +41,7 @@ public abstract class AbstractSolver implements Solver {
         Cell startCell = maze.getCell(startCoord);
         Cell endCell = maze.getCell(endCoord);
 
+        // Добавляем начальную ячейку в структуру и отмечаем её как посещённую
         addToStructure(startCell);
         visited.add(startCell);
         costMap.put(startCell, startCell.cellType().movementCost());
@@ -48,17 +49,20 @@ public abstract class AbstractSolver implements Solver {
         while (!isStructureEmpty()) {
             Cell current = retrieveFromStructure();
 
+            // Если нашли конечную ячейку, восстанавливаем путь
             if (current.equals(endCell)) {
                 int totalCost = costMap.get(endCell);
                 return reconstructorPath.reconstruct(predecessors, endCell, totalCost);
             }
 
+            // Обработка всех соседей текущей ячейки
             for (Edge edge : maze.getEdges(current)) {
                 if (mazeTypeProvider.isPassage(edge.type())) {
                     Cell neighbor = edge.to();
                     int currentCost = costMap.get(current);
                     int newCost = currentCost + edge.type().movementCost() + neighbor.cellType().movementCost();
 
+                    // Добавляем соседа в структуру, если он ещё не посещён
                     if (visited.add(neighbor)) {
                         addToStructure(neighbor);
                         predecessors.put(neighbor, current);

@@ -15,6 +15,9 @@ import lombok.Setter;
 
 /**
  * Генератор лабиринтов с использованием алгоритма Growing Tree.
+ * Алгоритм "растущего дерева" заключается в добавлении ячеек в лабиринт по мере их посещения,
+ * пока все ячейки не будут включены в лабиринт.
+ * Стратегия выбора активной ячейки определяется через SelectionStrategyGrowingTree.
  */
 @AllArgsConstructor
 public class GrowingTreeMazeGenerator implements Generator {
@@ -44,9 +47,11 @@ public class GrowingTreeMazeGenerator implements Generator {
         int startCol = randomGenerator.nextInt(width);
         Cell startCell = grid[startRow][startCol];
 
+        // Помечаем стартовую ячейку как посещённую
         visited[startRow][startCol] = true;
         activeCells.add(startCell);
 
+        // Пока есть активные ячейки
         while (!activeCells.isEmpty()) {
             Cell currentCell = selectActiveCell(activeCells, selectionStrategy);
 
@@ -54,9 +59,10 @@ public class GrowingTreeMazeGenerator implements Generator {
             List<Edge> unvisitedNeighbors = mazeUtils.getUnvisitedNeighbors(maze, currentCell, visited);
 
             if (!unvisitedNeighbors.isEmpty()) {
-                // Выбор случайного не посещённого соседа
+                // Если есть не посещённые соседи, выбираем случайного соседа
                 Edge edge = unvisitedNeighbors.get(randomGenerator.nextInt(unvisitedNeighbors.size()));
 
+                // Устанавливаем проход между текущей ячейкой и выбранным соседом
                 mazeUtils.setPassableEdgeAndReverse(maze, edge, typeProvider);
 
                 // Помечаем соседа как посещённого и добавляем его в активные ячейки
